@@ -232,17 +232,34 @@
                 "type": "text",
                 "key": "prod-cluster-namespace",
                 "readonly": false
-              },
-              {
-            "type": "text",
-            "readonly": false,
-            title": {
-              "$ref": "#/messages/deploy.emergencylabel"
-            },
-            "key": "emergency_label"
-           }
+              }
           ]
-      },{
+      },
+      {
+        "type": "table",
+        "columnCount": 1,
+        "widths": [
+              "24%"
+          ],
+        "items": [
+            {
+              "type": "text",
+              title": {
+            "$ref": "#/messages/deploy.emergencylabel"
+          },
+              "readonly": false
+            },
+            {
+          "type": "text",
+          "readonly": false,
+          title": {
+            "$ref": "#/messages/deploy.emergencylabel"
+          },
+          "key": "emergency_label"
+         }
+        ]
+      },
+      {
         "type": "table",
         "columnCount": 1,
           "widths": ["100%"],
