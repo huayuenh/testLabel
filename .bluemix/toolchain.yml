@@ -1,0 +1,99 @@
+version: '2'
+messages:
+  $i18n: locales.yml
+template:
+  name:
+    $ref: "#/messages/template.name"
+  description:
+    $ref: "#/messages/template.description"
+  header: '![](toolchain.svg?localize)'
+  icon: secure-lock-kubernetes.svg
+  required:
+    - build
+    - app-repo
+    - pipeline-repo
+    - evidence-repo
+    - issue-repo
+    - serviceNow
+    - dra
+  info:
+    git url: >
+      "[" + $env.repository + "]" +
+        "(" + $env.repository + ")"
+    git branch: >
+      "[" + $env.branch + "]" +
+        "(" + $env.repository +
+          "/tree/" + $env.branch + ")"
+toolchain:
+  name: 'simple-tekton-toolchain-{{timestamp}}'
+  template:
+    getting_started:
+      $ref: "#/messages/template.gettingStarted" 
+services:
+  app-repo:
+    service_id: githubpublic
+    parameters:
+      repo_name: '{{toolchain.name}}'
+      source_repo_url: 'https://github.com/open-toolchain/hello-containers'
+      type: clone
+      has_issues: false
+      enable_traceability: true
+  pipeline-repo:
+    service_id: githubpublic
+    parameters:
+      repo_name: '{{toolchain.name}}'
+      source_repo_url: 'https://github.com/open-toolchain/hello-tekton'
+      repo_url: 'https://github.com/open-toolchain/hello-tekton'
+      type: link
+      has_issues: false
+      enable_traceability: true
+  issues-repo:
+    service_id: githubpublic
+    parameters:
+      repo_name: 'issues-{{toolchain.name}}'
+      type: new
+      has_issues: false
+      enable_traceability: true
+  evidence-repo:
+    service_id: githubpublic
+    parameters:
+      repo_name: 'evidence-{{toolchain.name}}'
+      type: new
+      has_issues: false
+      enable_traceability: true
+  build:
+    service_id: pipeline
+    parameters:
+      services:
+        - repo
+      name: '{{services.repo.parameters.repo_name}}'
+      type: tekton
+      ui-pipeline: true
+      configuration:
+        content:
+          $text: tekton.yaml
+        env:
+          GIT_REPO: repo
+          CF_APP_NAME: '{{form.pipeline.parameters.app-name}}'
+          REGISTRY_REGION_ID: '{{form.pipeline.parameters.registry-region}}'
+          REGISTRY_NAMESPACE: '{{form.pipeline.parameters.registry-namespace}}'
+          API_KEY: '{{form.pipeline.parameters.api-key}}'
+          PROD_REGION_ID: '{{form.pipeline.parameters.prod-region}}'
+          PROD_CLUSTER_NAME: '{{form.pipeline.parameters.prod-cluster-name}}'
+          PROD_CLUSTER_NAMESPACE: '{{form.pipeline.parameters.prod-cluster-namespace}}'
+          REPOSITORY: '{{services.repo.parameters.source_repo_url}}'
+          REVISION: master
+        execute: true
+  webide:
+    service_id: orion
+  serviceNow:
+    service_id: customtool 
+  dra:
+    service_id: draservicebroker
+form:
+  pipeline:
+    parameters:
+      app-name: '{{services.repo.parameters.repo_name}}'
+      prod-cluster-namespace: prod
+    schema:
+      $ref: deploy.json
