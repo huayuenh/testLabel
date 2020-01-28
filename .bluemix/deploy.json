@@ -242,6 +242,12 @@
               "24%"
           ],
         "items": [
+          {
+            "type": "label",
+            "title": {
+              "$ref": "#/messages/deploy.emergencylabel"
+            }
+          },
             {
           "type": "text",
           "readonly": false,
