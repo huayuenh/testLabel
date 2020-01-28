@@ -246,8 +246,9 @@
               "type": "label",
               title": {
             "$ref": "#/messages/deploy.emergencylabel"
-            }
-            ,
+          },
+              "readonly": false
+            },
             {
           "type": "text",
           "readonly": false,
